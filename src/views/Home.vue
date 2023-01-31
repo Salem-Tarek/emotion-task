@@ -14,7 +14,7 @@
         <div class="prods my-3">
           <v-row>
             <v-col cols="12" sm="6" md="4" lg="3" v-for="product in products" :key="product.id">
-              <Product :quantityInCart="isExistInCart(product.id)" :product="product" />
+              <Product :product="product" />
             </v-col>
           </v-row>
         </div>
@@ -43,7 +43,7 @@ export default {
     isExistInCart(id){
       if(this.cartList.length){
         for(let cartItem of this.cartList){
-          if(cartItem.id === id){
+          if(parseInt(cartItem.id) === parseInt(id)){
             return cartItem.quantity;
           }
         }

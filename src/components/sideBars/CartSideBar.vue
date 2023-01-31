@@ -31,7 +31,7 @@
                   $ {{ parseFloat(cartProduct.price).toFixed(2) }} <span v-if="cartProduct.weight">/ {{ cartProduct.weight }}</span>
                 </p>
                 <div class="quantity d-flex align-center justify-space-between rounded-pill px-3">
-                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="cartProduct.quantity--">-</v-btn>
+                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="decreaseQuantityAction(cartProduct)">-</v-btn>
                   <v-text-field
                     hide-spin-buttons
                     hide-details
@@ -41,7 +41,7 @@
                     type="number"
                     class="text-center rounded-0"
                   ></v-text-field>
-                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="cartProduct.quantity++">+</v-btn>
+                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="increaseQuantityAction(cartProduct)">+</v-btn>
                 </div>
               </div>
             </div>
@@ -62,7 +62,7 @@
     <div class="totalPrice2" v-if="cartList.length">
       <v-list-item class="justify-space-between align-center total subTotal mt-3">
         <p>Subtotal</p>
-        <p>{{ getTotal }} EGP</p>
+        <p>{{ totalCost }} EGP</p>
       </v-list-item>
       <v-list-item class="justify-space-between align-center total tax">
         <p>Tax</p>
@@ -70,7 +70,7 @@
       </v-list-item>
       <v-list-item class="justify-space-between align-center total allTotal">
         <p>Order Total</p>
-        <p>{{ getTotal }} EGP</p>
+        <p>{{ totalCost }} EGP</p>
       </v-list-item>
     </div>
   </v-navigation-drawer>
@@ -89,7 +89,6 @@ export default {
   data() {
     return {
       showSideBar: null,
-      getTotal: 1325.22,
     };
   },
   watch: {
@@ -108,11 +107,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(["cartList"]),
+    ...mapState(["cartList", "totalCost"]),
     ...mapGetters(["favListGetter"]),
   },
   methods: {
-    ...mapActions(['removeProductFromCartAction', "toggleIsFavAction", "removeProductFromCartAction", 'toggleFavListAction', 'toggleCartListAction']),
+    ...mapActions(['removeProductFromCartAction', "toggleIsFavAction", "removeProductFromCartAction", 'toggleFavListAction', 'toggleCartListAction', 'decreaseQuantityAction', 'increaseQuantityAction', 'getTotalCostAction']),
     isExistInFavList(id){
       return this.favListGetter.find(prod => prod.id === id);
     },
@@ -120,7 +119,10 @@ export default {
       this.toggleIsFavAction(id);
       this.toggleCartListAction();
       this.toggleFavListAction()
-    }
+    },
+  },
+  mounted(){
+    this.getTotalCostAction();
   },
 };
 </script>

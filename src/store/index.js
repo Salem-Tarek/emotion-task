@@ -65,6 +65,8 @@ export default new Vuex.Store({
     showNav: false,
     showFav: false,
     showCart: false,
+    isCartChanges: false,
+    totalCost: 0,
   },
   getters: {
     favListGetter(state){
@@ -79,8 +81,9 @@ export default new Vuex.Store({
     updateCartList(state, prod){
       if(state.cartList.length){
         for(let product of state.cartList){
-          if(product.id === prod.id){
-            product.quantity += 1;
+          if(parseInt(product.id) == parseInt(prod.id)){
+            let prodIndex = state.cartList.findIndex(product => parseInt(product.id) === parseInt(prod.id));
+            state.cartList[prodIndex].quantity += 1;
             return;
           }
         }
@@ -91,11 +94,12 @@ export default new Vuex.Store({
     pushToCart(state, prod){
       state.cartList.push(prod)
     },
-    removeProductFromCart(state, prod){
-      if(prod.key){
-        state.cartList = state.cartList.filter(prod => prod.key !== prod.key);
+    removeProductFromCart(state, product){
+      if(product.key){
+        state.cartList = state.cartList.filter(prod => prod.key !== product.key);
+        localStorage.setItem('removedFromCart', 'true')
       }else{
-        state.cartList = state.cartList.filter(prod => prod.id !== prod.id)
+        state.cartList = state.cartList.filter(prod => parseInt(prod.id) !== parseInt(product.id))
       }
     },
     increaseQuantity(state, prod){
@@ -103,7 +107,7 @@ export default new Vuex.Store({
         let prodIndex = state.cartList.findIndex(product => product.key === prod.key);
         state.cartList[prodIndex].quantity += 1;
       }else{
-        let prodIndex = state.cartList.findIndex(product => product.id === prod.id);
+        let prodIndex = state.cartList.findIndex(product => parseInt(product.id) === parseInt(prod.id));
         if(prodIndex >= 0){
           state.cartList[prodIndex].quantity += 1;
         }else{
@@ -133,25 +137,61 @@ export default new Vuex.Store({
     toggleCartList(state){
       state.showCart = !state.showCart;
     },
+    activeIsCartChanges(state){
+      state.isCartChanges = true;
+    },
+    deactiveIsCartChanges(state){
+      state.isCartChanges = false;
+    },
+    getTotalCost(state){
+      let cost = 0;
+      for(let prod of state.cartList){
+        cost += prod.quantity * prod.price;
+      }
+      state.totalCost = cost.toFixed(2)
+    }
   },
   actions: {
     toggleIsFavAction({ commit }, id){
       commit('toggleIsFav', id)
     },
     pushToCartAction({ commit }, prod){
-      commit('pushToCart', prod)
+      commit('pushToCart', prod);
+      commit('getTotalCost')
     },
     removeProductFromCartAction({ commit }, prod){
-      commit('removeProductFromCart', prod)
+      commit('removeProductFromCart', prod);
+      commit('getTotalCost')
     },
     updateCartListAction({ commit }, prod){
-      commit('updateCartList', prod)
+      commit('updateCartList', prod);
+      commit('getTotalCost')
     },
     increaseQuantityAction({ commit }, prod){
-      commit('increaseQuantity', prod)
+      const myPromise = new Promise((myResolve, myReject) => {
+        myResolve();
+        myReject();
+      });
+      myPromise.then(() => {
+        commit('increaseQuantity', prod);
+        commit('getTotalCost');
+        commit('activeIsCartChanges');
+      }).then(() => {
+        commit('deactiveIsCartChanges');
+      }).catch((err) => console.log(err))
     },
     decreaseQuantityAction({ commit }, prod){
-      commit('decreaseQuantity', prod)
+      const myPromise = new Promise((myResolve, myReject) => {
+        myResolve();
+        myReject();
+      });
+      myPromise.then(() => {
+        commit('decreaseQuantity', prod);
+        commit('getTotalCost');
+        commit('activeIsCartChanges');
+      }).then(() => {
+        commit('deactiveIsCartChanges');
+      }).catch((err) => console.log(err))
     },
     toggleNavListAction({ commit }){
       commit('toggleNavList')
@@ -161,6 +201,12 @@ export default new Vuex.Store({
     },
     toggleCartListAction({ commit }){
       commit('toggleCartList')
+    },
+    deactiveIsCartChangesAction({ commit }){
+      commit('deactiveIsCartChanges')
+    },
+    getTotalCostAction({ commit }){
+      commit('getTotalCost')
     },
   },
   modules: {},

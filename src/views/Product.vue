@@ -21,7 +21,7 @@
             ></v-select>
           </div>
           <div class="quantity_addToCart d-flex my-5 align-end">
-            <div class="quantity_wrapper mr-3" v-if="cartList.filter(prod => prod.id === product.id).length">
+            <div class="quantity_wrapper mr-3" v-if="product.quantity">
               <p>Quantity</p>
               <div class="quantity d-flex align-center justify-space-between rounded-pill px-3">
                 <v-btn x-small :class="['mb-0']" @click="decreaseQuantityAction(product);toggleCartListAction()">-</v-btn>
@@ -40,7 +40,7 @@
             <div class="addToCart">
               <v-btn small class="rounded-pill" @click="addToCart(product)">Add to cart</v-btn>
               <v-badge
-                v-if="isExistInCart(product.id)"
+                v-if="isExistInCart(product.id) && product.quantity"
                 class="font-weight-bold"
                 color="yellow darken-1 teal--text"
                 :content="product.quantity"
@@ -96,15 +96,14 @@ export default {
       let defaultProd = {
         ...this.product
       }
-      defaultProd.quantity = 1;
+      defaultProd.quantity = 0;
       defaultProd.key = '';
       defaultProd.id = this.$route.params.id;
-      this.product = this.cartList.filter(prod => prod.key.indexOf(e) >= 0 && prod.id == this.$route.params.id)[0] || defaultProd;
-      console.log(this.product);
+
+      this.product = this.cartList.filter(prod => prod.weight?.indexOf(e) >= 0 && prod.id == this.$route.params.id)[0] || defaultProd;
     },
     addToCart(prod) {
-      console.log(this.product);
-      if(prod.key && this.cartList.some(product => product.weight === this.selectedWeight) && this.cartList.some(product => product.key === prod.key)){
+      if(prod.key && this.cartList.some(product => product.weight == this.selectedWeight) && this.cartList.some(product => product.key == prod.key)){
         let theProd = this.cartList.filter(product => product.key === prod.key)[0];
         this.increaseQuantityAction(theProd);
         this.toggleCartListAction()
@@ -116,8 +115,8 @@ export default {
         weight: this.selectedWeight,
         quantity: 1,
       }
-      console.log(allProdData);
       this.pushToCartAction(allProdData);
+      this.product = allProdData;
       this.toggleCartListAction()
     },
   },
@@ -126,7 +125,6 @@ export default {
       this.product = this.cartList.filter(prod => prod.id == this.$route.params.id)[0];
     }else{
       this.product = this.products.filter(prod => prod.id == this.$route.params.id)[0];
-      this.product.quantity = 1;
     }
     this.$watch(
       () => this.$route.params,
@@ -135,11 +133,21 @@ export default {
           this.product = this.cartList.filter(prod => prod.id == this.$route.params.id)[0];
         }else{
           this.product = this.products.filter(prod => prod.id == this.$route.params.id)[0];
-          this.product.quantity = 1;
         }
       }
     )
   },
+  watch: {
+    cartList: {
+      handler(){
+        if(localStorage.getItem('removedFromCart')){
+          this.product.quantity = 0;
+          localStorage.removeItem('removedFromCart')
+        }
+      },
+      deep: true
+    }
+  }
 }
 </script>
 
