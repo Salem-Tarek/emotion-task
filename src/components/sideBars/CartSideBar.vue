@@ -4,7 +4,7 @@
       <h2 class="text-uppercase">Cart List</h2>
       <v-icon @click="showSideBar = false">mdi-close</v-icon>
     </div>
-    <v-list nav dense class="pa-0 mb-0 cartItems">
+    <v-list v-if="cartList.length" nav dense class="pa-0 mb-0 cartItems">
       <v-list-item-group>
         <template v-for="(cartProduct, index) in cartList">
           <v-list-item
@@ -26,10 +26,10 @@
                   cartProduct.title
                 }}</v-list-item-title>
                 <p class="subtitle-1 font-weight-bold ml-2 mb-1">
-                  $ {{ parseFloat(cartProduct.price).toFixed(2) }} <span v-if="cartProduct.weight">/ {{ cartProduct.weight }}</span>
+                  $ {{ parseFloat(cartProduct.price).toFixed(2) }} <span v-if="cartProduct.weight">/ {{ `${cartProduct.weight} gm` }}</span>
                 </p>
-                <div class="quantity d-flex align-center justify-space-between rounded-pill px-3">
-                  <v-btn x-small :class="['mb-0', parseInt(cartProduct.quantity) === 1 ? 'disabled' : '']" @click="decreaseQuantityAction(cartProduct)">-</v-btn>
+                <div class="quantity d-flex align-center justify-space-between rounded-pill px-0">
+                  <v-btn color="transparent" x-small class="mb-0 elevation-0" @click="decreaseQuantityAction(cartProduct)">-</v-btn>
                   <v-text-field
                     hide-spin-buttons
                     hide-details
@@ -39,7 +39,7 @@
                     type="number"
                     class="text-center rounded-0"
                   ></v-text-field>
-                  <v-btn x-small :class="['mb-0', parseInt(cartProduct.quantity) === 1 ? 'disabled' : '']" @click="increaseQuantityAction(cartProduct)">+</v-btn>
+                  <v-btn color="transparent" x-small class="mb-0 elevation-0" @click="increaseQuantityAction(cartProduct)">+</v-btn>
                 </div>
               </div>
             </div>
@@ -70,6 +70,12 @@
         <p>Order Total</p>
         <p>{{ totalCost }} EGP</p>
       </v-list-item>
+    </div>
+    <div v-else class="text-center mt-4">
+      <h1 class="d-flex align-center justify-center display-1"> 
+        <v-icon large class="black--text" left>mdi-close-circle-outline</v-icon>
+        <span>No Products</span>  
+      </h1>
     </div>
   </v-navigation-drawer>
 </template>
@@ -130,18 +136,9 @@ export default {
   background-color: orangered !important;
   color: white !important;
 }
-.quantity {
-  border: 1px solid #52964d;
-  max-height: 25px;
-  overflow: hidden;
-  h4.disabled {
-    user-select: none;
-  }
-}
+
 .cart {
   width: clamp(300px, 500px, 50%) !important;
-  // min-width: 500px;
-  // max-width: 75% !important;
   .cartItems {
     height: calc(100vh - 160px - 55px);
     overflow-y: scroll;
@@ -149,21 +146,33 @@ export default {
       display: none;
     }
   }
-}
-.cart .quantity .v-input {
-  max-width: 50px !important;
-  border-top: none;
-  border-bottom: none;
-  input {
-    text-align:center;
-    font-weight: bold;
-    font-size: 13px
-  }
-}
 
-.cart .actions {
-  p:last-of-type {
-    color: #277a6e;
+  .quantity {
+    border: 1px solid #52964d;
+    max-height: 25px;
+    overflow: hidden;
+    h4.disabled {
+      user-select: none;
+    }
+    .v-btn, .v-btn:focus, .v-btn:hover {
+      box-shadow: none;
+      background-color: transparent;
+    }
+    .v-input {
+      max-width: 50px !important;
+      border-top: none;
+      border-bottom: none;
+      input {
+        text-align:center;
+        font-weight: bold;
+        font-size: 13px
+      }
+    }
+  }
+  .actions {
+    p:last-of-type {
+      color: #277a6e;
+    }
   }
 }
 
@@ -173,7 +182,7 @@ export default {
   right:0;
   left: 0;
   .allTotal p{
-    font-size: 25px;
+    font-size: 22px;
   }
 
   .total::before, .total::after {

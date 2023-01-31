@@ -6,8 +6,8 @@
     </div>
     <v-list nav dense>
       <v-list-item-group>
-        <v-list-item class="active">
-          <v-list-item-title>Foo</v-list-item-title>
+        <v-list-item @click="$router.push('/')">
+          <v-list-item-title>Products</v-list-item-title>
         </v-list-item>
 
         <v-list-item>

@@ -16,15 +16,22 @@
             <v-select
               @change="getProductData"
               v-model="selectedWeight"
-              :items="items"
+              :items="product.weights"
               outlined
-            ></v-select>
+            >
+              <template v-slot:selection="{ item }">
+                {{ getText(item) }}
+              </template>
+              <template v-slot:item="{ item }">
+                {{ getText(item) }}
+              </template>
+            </v-select>
           </div>
           <div class="quantity_addToCart d-flex my-5 align-end">
             <div class="quantity_wrapper mr-3" v-if="product.quantity">
               <p>Quantity</p>
               <div class="quantity d-flex align-center justify-space-between rounded-pill px-3">
-                <v-btn x-small :class="['mb-0']" @click="decreaseQuantityAction(product);toggleCartListAction()">-</v-btn>
+                <v-btn x-small color="transparent" class="mb-0 elevation-0" @click="decreaseQuantityAction(product);toggleCartListAction()">-</v-btn>
                 <v-text-field
                   hide-spin-buttons
                   hide-details
@@ -34,7 +41,7 @@
                   type="number"
                   class="text-center rounded-0"
                 ></v-text-field>
-                <v-btn x-small :class="['mb-0']" @click="increaseQuantityAction(product);toggleCartListAction()">+</v-btn>
+                <v-btn x-small color="transparent" class="mb-0 elevation-0" @click="increaseQuantityAction(product);toggleCartListAction()">+</v-btn>
               </div>
             </div>
             <div class="addToCart">
@@ -72,9 +79,10 @@ export default {
   data(){
     return {
       items: ['250 gm', '500 gm', '750 gm', '1000 gm'],
-      selectedWeight: '250 gm',
+      selectedWeight: 250,
       test: 1,
       product: {},
+      productPrice: null,
     }
   },
   computed:{
@@ -99,8 +107,7 @@ export default {
       defaultProd.quantity = 0;
       defaultProd.key = '';
       defaultProd.id = this.$route.params.id;
-
-      this.product = this.cartList.filter(prod => prod.weight?.indexOf(e) >= 0 && prod.id == this.$route.params.id)[0] || defaultProd;
+      this.product = this.cartList.filter(prod => prod.weight?.toString().indexOf(e) >= 0 && prod.id == this.$route.params.id)[0] || defaultProd;
     },
     addToCart(prod) {
       if(prod.key && this.cartList.some(product => product.weight == this.selectedWeight) && this.cartList.some(product => product.key == prod.key)){
@@ -115,10 +122,13 @@ export default {
         weight: this.selectedWeight,
         quantity: 1,
       }
+      this.productPrice = this.productPrice ? this.productPrice : allProdData.price;
+      allProdData.price = this.productPrice * (this.selectedWeight / 1000);
       this.pushToCartAction(allProdData);
       this.product = allProdData;
       this.toggleCartListAction()
     },
+    getText : item => `${item} gm`,
   },
   created(){
     if(this.cartList.filter(prod => prod.id == this.$route.params.id).length){
@@ -141,12 +151,17 @@ export default {
     cartList: {
       handler(){
         if(localStorage.getItem('removedFromCart')){
-          this.product.quantity = 0;
+          if(this.product.key === localStorage.getItem('removedFromCart')){
+            this.product.quantity = 0;
+          }
           localStorage.removeItem('removedFromCart')
         }
       },
       deep: true
     }
+  },
+  destroyed(){
+    this.productPrice = null;
   }
 }
 </script>
@@ -177,6 +192,10 @@ export default {
         h4.disabled {
           user-select: none;
         }
+        .v-btn, .v-btn:focus, .v-btn:hover {
+          box-shadow: none;
+          background-color: transparent;
+        }
         .v-input {
           max-width: 50px !important;
           border-top: none;
@@ -187,6 +206,7 @@ export default {
             font-size: 13px
           }
         }
+
       }
       .addToCart {
         .v-btn {

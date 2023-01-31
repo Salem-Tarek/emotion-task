@@ -5,14 +5,15 @@
       <FavSideBar @favSideClosed="toggleFavListAction" :show="showFav" />
       <CartSideBar @cartSideClosed="toggleCartListAction" :show="showCart" />
     </div>
-    <v-app-bar app class="elevation-0 py-4">
+    <v-app-bar app class="elevation-0 pb-4">
       <v-spacer></v-spacer>
       <div class="cart-nav d-flex align-center">
         <v-icon class="d-block d-sm-none" @click="toggleNavListAction">mdi-menu</v-icon>
         <v-icon @click="toggleCartListAction">mdi-cart</v-icon>
+        <v-icon @click="toggleFavListAction">mdi-heart</v-icon>
       </div>
       <div class="list d-none d-sm-flex">
-        <v-btn to="/" color="grey lighten-2" tile light depressed :class="['mx-2', index === 0 ? 'active' : '', 'mb-2']" v-for="(link, index) in links" :key="link">{{ link }}</v-btn>
+        <v-btn to="/" color="grey lighten-2" tile light depressed :class="['mx-2', index === 0 && $route.name === 'Home' ? 'active' : '', 'mb-2']" v-for="(link, index) in links" :key="index">{{ link }}</v-btn>
       </div>
     </v-app-bar>
 
@@ -30,7 +31,7 @@ import { mapState, mapActions } from 'vuex'
 export default {
   name: "App",
   data: () => ({
-    links: ['All', 'Food', 'Non Food', 'Fashion & Linen'],
+    links: ['Products', 'Food', 'Non Food', 'Fashion & Linen'],
   }),
   components: {
     NavSideBar,
@@ -42,7 +43,7 @@ export default {
   },
   methods:{
     ...mapActions(['toggleCartListAction', 'toggleNavListAction', 'toggleFavListAction']),
-  }
+  },
 };
 </script>
 <style scoped>

@@ -97,7 +97,7 @@ export default new Vuex.Store({
     removeProductFromCart(state, product){
       if(product.key){
         state.cartList = state.cartList.filter(prod => prod.key !== product.key);
-        localStorage.setItem('removedFromCart', 'true')
+        localStorage.setItem('removedFromCart', product.key)
       }else{
         state.cartList = state.cartList.filter(prod => parseInt(prod.id) !== parseInt(product.id))
       }
