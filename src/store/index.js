@@ -11,7 +11,7 @@ export default new Vuex.Store({
       {
         id: 1,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 1',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: false,
@@ -20,7 +20,7 @@ export default new Vuex.Store({
       {
         id: 2,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 2',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: false,
@@ -28,7 +28,7 @@ export default new Vuex.Store({
       {
         id: 3,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 3',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: true,
@@ -37,7 +37,7 @@ export default new Vuex.Store({
       {
         id: 4,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 4',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: false,
@@ -46,7 +46,7 @@ export default new Vuex.Store({
       {
         id: 5,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 5',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: false,
@@ -54,7 +54,7 @@ export default new Vuex.Store({
       {
         id: 6,
         img: require("../assets/logo.svg"),
-        price: 5.55,
+        price: 200,
         title: 'Lorem ipsum 6',
         description: "Lorem ipsum dolor sit amet, consectetur.",
         isFav: false,
@@ -83,7 +83,7 @@ export default new Vuex.Store({
         for(let product of state.cartList){
           if(parseInt(product.id) == parseInt(prod.id)){
             let prodIndex = state.cartList.findIndex(product => parseInt(product.id) === parseInt(prod.id));
-            state.cartList[prodIndex].quantity += 1;
+            state.cartList[prodIndex].quantity = parseInt(state.cartList[prodIndex].quantity) + 1;
             return;
           }
         }
@@ -105,25 +105,25 @@ export default new Vuex.Store({
     increaseQuantity(state, prod){
       if(prod.key){
         let prodIndex = state.cartList.findIndex(product => product.key === prod.key);
-        state.cartList[prodIndex].quantity += 1;
+        state.cartList[prodIndex].quantity = parseInt(state.cartList[prodIndex].quantity) + 1;
       }else{
         let prodIndex = state.cartList.findIndex(product => parseInt(product.id) === parseInt(prod.id));
         if(prodIndex >= 0){
-          state.cartList[prodIndex].quantity += 1;
+          state.cartList[prodIndex].quantity = parseInt(state.cartList[prodIndex].quantity) + 1;
         }else{
           state.cartList.push(prod);
         }
       }
     },
     decreaseQuantity(state, prod){
-      if(prod.quantity > 1){
+      if(parseInt(prod.quantity) > 1){
         if(prod.key){
           let prodIndex = state.cartList.findIndex(product => product.key === prod.key);
-          state.cartList[prodIndex].quantity -= 1;
+          state.cartList[prodIndex].quantity = parseInt(state.cartList[prodIndex].quantity) - 1;
         }else {
           let prodIndex = state.cartList.findIndex(product => product.id === prod.id);
           if(prodIndex >= 0){
-            state.cartList[prodIndex].quantity -= 1;
+            state.cartList[prodIndex].quantity = parseInt(state.cartList[prodIndex].quantity) - 1;
           }
         }
       }
@@ -146,7 +146,7 @@ export default new Vuex.Store({
     getTotalCost(state){
       let cost = 0;
       for(let prod of state.cartList){
-        cost += prod.quantity * prod.price;
+        cost += parseInt(prod.quantity) * prod.price;
       }
       state.totalCost = cost.toFixed(2)
     }

@@ -1,10 +1,11 @@
 <template>
   <v-navigation-drawer width="350" right v-model="showSideBar" app temporary>
+    <div class="grey lighten-2 d-flex justify-space-between rounded-0 mb-0 pa-2">
+      <h2 class="text-uppercase">Wish List</h2>
+      <v-icon @click="showSideBar = false">mdi-close</v-icon>
+    </div>
     <v-list nav dense class="pa-0">
       <v-list-item-group>
-        <v-list-item :ripple="false" class="grey lighten-2 justify-center rounded-0 mb-0 py-2">
-          <h2 class="text-uppercase">Wish List</h2>
-        </v-list-item>
         <template v-for="favouriteProduct in favListGetter">
           <v-list-item
             :ripple="false"

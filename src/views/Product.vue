@@ -86,7 +86,7 @@ export default {
       if(this.cartList.length){
         for(let cartItem of this.cartList){
           if(cartItem.id == id){
-            return cartItem.quantity;
+            return parseInt(cartItem.quantity);
           }
         }
       }

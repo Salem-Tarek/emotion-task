@@ -1,5 +1,9 @@
 <template>
   <v-navigation-drawer v-model="showSideBar" app temporary>
+    <div class="grey lighten-2 d-flex rounded-0 mb-0 pa-2">
+      <v-spacer></v-spacer>
+      <v-icon @click="showSideBar = false">mdi-close</v-icon>
+    </div>
     <v-list nav dense>
       <v-list-item-group>
         <v-list-item class="active">

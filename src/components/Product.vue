@@ -75,7 +75,7 @@ export default {
       let allCount = this.cartList.filter(prod => parseInt(prod.id) === parseInt(id));
       let count = 0;
       for(let cartItem of allCount){
-        count += cartItem.quantity;
+        count += parseInt(cartItem.quantity);
       }
       this.cartNum = count;
     },

@@ -1,13 +1,11 @@
 <template>
   <v-navigation-drawer class="cart" right v-model="showSideBar" app temporary>
-    <v-list nav dense class="pa-0 mb-0">
+    <div class="grey lighten-2 d-flex justify-space-between rounded-0 mb-0 pa-2">
+      <h2 class="text-uppercase">Cart List</h2>
+      <v-icon @click="showSideBar = false">mdi-close</v-icon>
+    </div>
+    <v-list nav dense class="pa-0 mb-0 cartItems">
       <v-list-item-group>
-        <v-list-item
-          :ripple="false"
-          class="grey lighten-2 justify-center rounded-0 mb-0 py-2"
-        >
-          <h2 class="text-uppercase">Cart List</h2>
-        </v-list-item>
         <template v-for="(cartProduct, index) in cartList">
           <v-list-item
             :ripple="false"
@@ -31,7 +29,7 @@
                   $ {{ parseFloat(cartProduct.price).toFixed(2) }} <span v-if="cartProduct.weight">/ {{ cartProduct.weight }}</span>
                 </p>
                 <div class="quantity d-flex align-center justify-space-between rounded-pill px-3">
-                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="decreaseQuantityAction(cartProduct)">-</v-btn>
+                  <v-btn x-small :class="['mb-0', parseInt(cartProduct.quantity) === 1 ? 'disabled' : '']" @click="decreaseQuantityAction(cartProduct)">-</v-btn>
                   <v-text-field
                     hide-spin-buttons
                     hide-details
@@ -41,16 +39,16 @@
                     type="number"
                     class="text-center rounded-0"
                   ></v-text-field>
-                  <v-btn x-small :class="['mb-0', cartProduct.quantity === 1 ? 'disabled' : '']" @click="increaseQuantityAction(cartProduct)">+</v-btn>
+                  <v-btn x-small :class="['mb-0', parseInt(cartProduct.quantity) === 1 ? 'disabled' : '']" @click="increaseQuantityAction(cartProduct)">+</v-btn>
                 </div>
               </div>
             </div>
             <v-list-item-content class="align-self-end">
               <div class="d-flex">
                 <v-spacer></v-spacer>
-                <div class="actions d-flex">
-                  <p class="red--text caption mb-0 mr-2" @click="removeProductFromCartAction(cartProduct)">Remove</p>
-                  <p v-if="favListGetter.map(prod => prod.id).indexOf(cartProduct.id) < 0" class="caption mb-0" @click="addToWishList(cartProduct.id)">Move To wishlist</p>
+                <div class="actions d-flex flex-wrap justify-center">
+                  <p class="red--text caption mb-0 text-center mr-2" @click="removeProductFromCartAction(cartProduct)">Remove</p>
+                  <p v-if="favListGetter.map(prod => prod.id).indexOf(cartProduct.id) < 0" class="caption mb-0 text-center" @click="addToWishList(cartProduct.id)">Move To wishlist</p>
                 </div>
               </div>
             </v-list-item-content>
@@ -59,7 +57,7 @@
         </template>
       </v-list-item-group>
     </v-list>
-    <div class="totalPrice2" v-if="cartList.length">
+    <div class="totalPrice" v-if="cartList.length">
       <v-list-item class="justify-space-between align-center total subTotal mt-3">
         <p>Subtotal</p>
         <p>{{ totalCost }} EGP</p>
@@ -141,9 +139,16 @@ export default {
   }
 }
 .cart {
-  // width: clamp(300px, 600px, 50%) !important;
-  min-width: 500px;
-  max-width: 75% !important;
+  width: clamp(300px, 500px, 50%) !important;
+  // min-width: 500px;
+  // max-width: 75% !important;
+  .cartItems {
+    height: calc(100vh - 160px - 55px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 .cart .quantity .v-input {
   max-width: 50px !important;
@@ -168,7 +173,7 @@ export default {
   right:0;
   left: 0;
   .allTotal p{
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .total::before, .total::after {
