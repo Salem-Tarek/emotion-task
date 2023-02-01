@@ -6,6 +6,9 @@
       <CartSideBar @cartSideClosed="toggleCartListAction" :show="showCart" />
     </div>
     <v-app-bar app class="elevation-0 pb-4">
+      <a class="text-decoration-none" href="https://github.com/Salem-Tarek/emotion-task" target="_blank">
+        <v-icon large class="black--text">mdi-github</v-icon>
+      </a>
       <v-spacer></v-spacer>
       <div class="cart-nav d-flex align-center">
         <v-icon class="d-block d-sm-none" @click="toggleNavListAction">mdi-menu</v-icon>
@@ -43,6 +46,9 @@ export default {
   },
   methods:{
     ...mapActions(['toggleCartListAction', 'toggleNavListAction', 'toggleFavListAction']),
+    navigateToGithub(){
+      window.location = 'https://github.com/Salem-Tarek/emotion-task';
+    }
   },
 };
 </script>
